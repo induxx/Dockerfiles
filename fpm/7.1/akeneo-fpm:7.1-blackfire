@@ -1,18 +1,10 @@
 FROM akeneo/fpm:php-7.1
 
-RUN version=$(php -r "echo PHP_MAJOR_VERSION, PHP_MINOR_VERSION;") \
-    && curl -sSL -D - -A "Docker" -o /tmp/blackfire-probe.tar.gz https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$version \
+RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
+    && curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$version \
     && tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp \
     && mv /tmp/blackfire-*.so $(php -r "echo ini_get('extension_dir');")/blackfire.so \
-    && printf "extension=blackfire.so\n" > /etc/php/7.1/cli/conf.d/blackfire.ini
-
-RUN curl -sSL -D - -A "Docker" -o /tmp/blackfire-client.tar.gz https://blackfire.io/api/v1/releases/client/linux_static/amd64 \
-    && tar zxpf /tmp/blackfire-client.tar.gz -C /tmp \
-    && mv /tmp/blackfire.sha1 /tmp/blackfire.sha1.so \
-    && chmod +x /tmp/blackfire*.so /tmp/blackfire \
-    && mv /tmp/blackfire /bin/blackfire \
-    && rm -rf /tmp/blackfire* \
-    && php -m | grep "^blackfire$" > /dev/null
+    && printf "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8707\n" > /etc/php/7.1/cli/conf.d/blackfire.ini
 
 CMD ["help"]
 ENTRYPOINT ["blackfire"]
