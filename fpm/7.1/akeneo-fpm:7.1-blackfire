@@ -1,9 +1,7 @@
 FROM akeneo/fpm:php-7.1
 
-# blackfire CLI (with bundled agent)
-RUN set -xeo pipefail \
-    && version=$(php -r "echo PHP_MAJOR_VERSION, PHP_MINOR_VERSION;") \
-    && curl -sSL -D - -A "Docker" -o /tmp/blackfire-probe.tar.gz https://blackfire.io/api/v1/releases/probe/php/alpine/amd64/${version} \
+RUN version=$(php -r "echo PHP_MAJOR_VERSION, PHP_MINOR_VERSION;") \
+    && curl -sSL -D - -A "Docker" -o /tmp/blackfire-probe.tar.gz https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$version \
     && curl -sSL -D - -A "Docker" -o /tmp/blackfire-client.tar.gz https://blackfire.io/api/v1/releases/client/linux_static/amd64 \
     && for file in /tmp/blackfire-*.tar.gz; do tar zxfp "${file}" -C /tmp; done \
     && for file in /tmp/blackfire-*.sha*; do echo "$(cat ${file})  ${file/.sha1/}"; done | sed 's/\.sha/.so/' | sha1sum -c - \
