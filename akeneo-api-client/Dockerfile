@@ -1,4 +1,4 @@
-FROM php:7-alpine3.8
+FROM php:7-alpine3.14
 
 RUN apk --no-cache add --virtual unzip
 
