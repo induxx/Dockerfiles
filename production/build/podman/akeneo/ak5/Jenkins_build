@@ -1,0 +1,27 @@
+#!/bin/bash
+
+LOCAL=$(pwd)
+LOCAL=$LOCAL"/$(dirname "$0")"
+
+source "${LOCAL}/.env.local"
+
+podman pod create --name="ak5-pod" --publish=8080:80
+
+echo "APP_DATABASE_USER=${APP_DATABASE_USER}"
+
+podman run -d \
+    --pod="ak5-pod" \
+    --name="ak5-pim-container" \
+    induxx/cloud-akeneo:ak5
+
+podman run -d \
+    --pod="ak5-pod" \
+    --name="mysql" \
+    -e MYSQL_ROOT_PASSWORD='root' -e MYSQL_USER="${APP_DATABASE_USER}" -e MYSQL_DATABASE="${APP_DATABASE_NAME}" -e MYSQL_PASSWORD="${APP_DATABASE_PASSWORD}" \
+    docker.io/library/mysql:latest --default-authentication-plugin=mysql_native_password 
+
+podman run -d \
+     --pod="ak5-pod" \
+     --name="elasticsearch-7.10" \
+     -e ES_JAVA_OPTS="-Xms512m -Xmx512m" -e discovery.type='single-node' -e xpack.security.enabled="false" \
+     docker.io/library/elasticsearch:7.10.1

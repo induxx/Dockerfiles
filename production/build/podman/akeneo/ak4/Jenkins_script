@@ -1,0 +1,39 @@
+#!/bin/bash
+
+GIT_REPO=induxx/akeneo-legio
+CURRENT_DIR=$(pwd)
+
+cd production/podman/akeneo/ak4
+
+init_project()
+{
+    rm -rf app && mkdir -p app
+
+    git clone git@github.com:${GIT_REPO}.git app
+
+    cd app
+
+    bash bin/init
+    cd -
+}
+
+#init_project
+
+podman build -t induxx/cloud-akeneo:ak4 .
+
+# ansible setup some stuff here like the scripts, cron
+
+#docker push induxx/cloud-akeneo:ak4
+
+#rm -rf app
+
+bash jenkins_build
+
+# extra commands to run after build
+bin/console d:s:c
+bin/console pim:installer:db --catalog vendor/akeneo/pim-enterprise-dev/src/Akeneo/Platform/Bundle/InstallerBundle/Resources/fixtures/icecat_demo_dev
+
+#ulimit -Sn
+
+#podman exec -it cloud-akeneo bash
+#podman stop cloud-akeneo; podman rm cloud-akeneo; podman image rm induxx/cloud-akeneo:ak4d

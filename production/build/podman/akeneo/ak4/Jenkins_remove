@@ -1,0 +1,10 @@
+#!/bin/bash
+
+podman stop app; 
+podman rm app;
+podman stop elasticsearch; 
+podman rm elasticsearch;
+podman stop mysql; 
+podman rm mysql;
+podman pod stop ak4-pod;
+#podman image rm induxx/cloud-akeneo:ak4d
