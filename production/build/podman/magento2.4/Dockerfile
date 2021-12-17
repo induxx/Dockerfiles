@@ -84,7 +84,7 @@ COPY files/php/app.ini /etc/php/7.4/mods-available/app.ini
 COPY files/php/cli-conf.ini /etc/php/7.4/cli/conf.d/99-pim.ini
 COPY files/php/fpm-conf.ini /etc/php/7.4/fpm/conf.d/99-pim.ini
 
-RUN phpenmod app
+RUN rm /etc/php/7.4/fpm/pool.d/www.conf && phpenmod app
 COPY --chown=build:www-data app /build/app
 COPY files/nginx /etc/nginx/sites-available/
 RUN rm /etc/nginx/sites-enabled/default; ln -s /etc/nginx/sites-available/prod.conf /etc/nginx/sites-enabled/prod.conf

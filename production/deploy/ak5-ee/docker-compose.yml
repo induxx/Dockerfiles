@@ -12,15 +12,13 @@ services:
       - 'pim'
 
   mysql:
-    image: 'mysql:8.0.22'
+    image: 'mysql/mysql-server'
     command: '--default-authentication-plugin=mysql_native_password'
     environment:
       MYSQL_ROOT_PASSWORD: 'root'
       MYSQL_USER: 'akeneo_pim'
       MYSQL_DATABASE: 'akeneo_pim'
       MYSQL_PASSWORD: 'akeneo_pim'
-    volumes:
-      - './docker/initdb.d:/docker-entrypoint-initdb.d:ro'
     ports:
       - '3306:3306'
     networks:
