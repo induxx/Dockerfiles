@@ -17,11 +17,9 @@ docker
 *.txt
 composer.phar
 composer.lock
-composer.json
 yarn.lock
 package.json
 node_modules
 Makefile
 .env.local.dist
 tsconfig.json
-build

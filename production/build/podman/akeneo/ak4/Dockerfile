@@ -23,9 +23,11 @@ RUN apt-get update && \
         curl \
         less \
         make \
+        htop \
         ssh-client \
         vim \
         nano \
+        aspell \
         ghostscript \
         unzip \
         cron \
@@ -45,6 +47,7 @@ RUN apt-get update && \
     apt-get --no-install-recommends --no-install-suggests --yes --quiet install \
         imagemagick \
         nginx \
+        mysql-client \
         php7.3-cli \
         php7.3-apcu \
         php7.3-mbstring \
@@ -67,13 +70,17 @@ RUN useradd -u 911 -U -d /build -s /bin/bash build && \
     usermod -G users build && \
     mkdir -p \
 	/build/app && \
-    chown build:www-data /build/app
+    chown build:www-data /build -R
 
+COPY files/php/app.conf /etc/php/7.3/fpm/pool.d/
 COPY files/php/app.ini /etc/php/7.3/mods-available/app.ini
+COPY files/php/cli-conf.ini /etc/php/7.3/cli/conf.d/99-pim.ini
+COPY files/php/fpm-conf.ini /etc/php/7.3/fpm/conf.d/99-pim.ini
+RUN rm /etc/php/7.3/fpm/pool.d/www.conf && phpenmod app
+
 RUN phpenmod app
 COPY --chown=build:www-data app /build/app
 COPY files/nginx /etc/nginx/sites-available/
-COPY files/entrypoint.sh /etc/entrypoint.sh
 RUN rm /etc/nginx/sites-enabled/default; ln -s /etc/nginx/sites-available/prod.conf /etc/nginx/sites-enabled/prod.conf
 
 EXPOSE 80

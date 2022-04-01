@@ -23,9 +23,11 @@ RUN apt-get update && \
         curl \
         less \
         make \
+        htop \
         ssh-client \
         vim \
         nano \
+        aspell \
         ghostscript \
         unzip \
         cron \
@@ -72,14 +74,31 @@ RUN useradd -u 911 -U -d /build -s /bin/bash build && \
 	/build/app && \
     chown build:www-data /build -R
 
+COPY files/php/app.conf /etc/php/7.4/fpm/pool.d/
 COPY files/php/app.ini /etc/php/7.4/mods-available/app.ini
+COPY files/php/cli-conf.ini /etc/php/7.4/cli/conf.d/99-pim.ini
+COPY files/php/fpm-conf.ini /etc/php/7.4/fpm/conf.d/99-pim.ini
+RUN rm /etc/php/7.4/fpm/pool.d/www.conf && phpenmod app
+
 RUN phpenmod app
 COPY --chown=build:www-data app /build/app
 COPY files/nginx /etc/nginx/sites-available/
 RUN rm /etc/nginx/sites-enabled/default; ln -s /etc/nginx/sites-available/prod.conf /etc/nginx/sites-enabled/prod.conf
 
-EXPOSE 80 22
+# cron & cron wrapper
+USER build
+COPY files/scripts/cron_wrapper.sh /build/scripts/cron_wrapper.sh
+COPY files/ak5.crons /build/scripts/cronfile
+RUN crontab /build/scripts/cronfile
 
-RUN systemctl enable php7.4-fpm; systemctl enable nginx
+USER root
+
+# pim_job_queue
+RUN mkdir -p /build/.config/systemd/user/
+COPY files/queue/pim_job_queue.service /etc/systemd/system/pim_job_queue@.service
+
+EXPOSE 80
+
+RUN systemctl enable php7.4-fpm; systemctl enable nginx; systemctl enable pim_job_queue@1.service
 
 CMD [ "/sbin/init" ]

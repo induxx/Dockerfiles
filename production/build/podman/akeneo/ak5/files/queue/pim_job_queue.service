@@ -1,0 +1,13 @@
+[Unit]
+Description=Akeneo PIM Job Queue Service (#%i)
+After=apache2.service
+
+[Service]
+Type=simple
+User=build
+WorkingDirectory=/build/app
+ExecStart=/build/app/bin/console akeneo:batch:job-queue-consumer-daemon --env=prod
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

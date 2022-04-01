@@ -26,6 +26,7 @@ RUN apt-get update && \
         ssh-client \
         vim \
         nano \
+        aspell \
         ghostscript \
         unzip \
         cron \

@@ -1,0 +1,36 @@
+version: '3.4'
+
+services:
+  fpm:
+    image: 'induxx/cloud:ak4-ce-ben'
+    environment:
+      APP_ENV: 'prod'
+    working_dir: '/build/app'
+    ports:
+      - '8080:80'
+    networks:
+      - 'pim'
+
+  mysql:
+    image: 'mysql/mysql-server'
+    command: '--default-authentication-plugin=mysql_native_password'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_USER: 'akeneo_pim'
+      MYSQL_DATABASE: 'akeneo_pim'
+      MYSQL_PASSWORD: 'akeneo_pim'
+    networks:
+      - 'pim'
+
+  elasticsearch:
+    image: 'docker.elastic.co/elasticsearch/elasticsearch-oss:7.5.1'
+    environment:
+      ES_JAVA_OPTS: '${ES_JAVA_OPTS:--Xms512m -Xmx512m}'
+      discovery.type: 'single-node'
+    ports:
+      - '9200:9200'
+    networks:
+      - 'pim'
+
+networks:
+  pim:

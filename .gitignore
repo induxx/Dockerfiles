@@ -1,2 +1,2 @@
-/production/build/docker/akeneo/ak5/files/fixtures/*
+/production/build/fixtures/*
 /var/*

@@ -1,0 +1,23 @@
+APP_DIR=/build/app
+
+SHELL="/build/scripts/cron_wrapper.sh"
+
+# CE crons
+0 1 * * 0    pim:versioning:purge --more-than-days 90 --no-interaction --force
+0 0 1 * *    akeneo:batch:purge-job-execution
+1 * * * *    akeneo:connectivity-audit:update-data
+10 * * * *   akeneo:connectivity-connection:purge-error
+0 3 * * *    pim:versioning:refresh
+0 4 * * *    pim:volume:aggregate
+15 0 * * *   pim:data-quality-insights:schedule-periodic-tasks
+*/10 * * * * pim:data-quality-insights:prepare-evaluations
+*/30 * * * * pim:data-quality-insights:evaluations
+
+#0 */2 * * *  akeneo:messenger:doctrine:purge-messages messenger_messages default
+
+# EE crons
+# 20 0 * * *   pimee:project:recalculate
+# 0 2 * * *    pimee:project:notify-before-due-date
+# 0 23 * * *   akeneo:reference-entity:refresh-records --all
+# 5 22 * * *   pimee:sso:rotate-log 30
+# 0 5 * * *    akeneo:rule:run

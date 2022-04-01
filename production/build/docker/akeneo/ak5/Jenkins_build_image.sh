@@ -20,9 +20,9 @@ init_project()
     cp .env.local app/.env.local
 
     mkdir -p app/var/install app/var/file_storage/asset app/var/file_storage/catalog
-    tar -xvf files/fixtures/retail_store/asset.tar -C app/var/file_storage/
-    tar -xvf files/fixtures/retail_store/catalog.tar -C app/var/file_storage/
-    cp files/fixtures/retail_store/akeneo_pim.sql.gz app/var/install/
+    tar -xvf ../../../fixtures/ak5/retail_store/asset.tar -C app/var/file_storage/
+    tar -xvf ../../../fixtures/ak5/retail_store/catalog.tar -C app/var/file_storage/
+    cp f ../../../fixtures/ak5/retail_store/akeneo_pim.sql.gz app/var/install/
 
     cd app
 

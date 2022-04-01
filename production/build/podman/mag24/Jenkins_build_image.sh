@@ -7,10 +7,10 @@ set -e
 # build process is meant for magento 2.4 and above
 # takes about 10 minutes to build
 
-# usage bash production/build/podman/magento2.4/Jenkins_build_image.sh
+# usage bash ./production/build/podman/mag24/Jenkins_build_image.sh
 
-CONTAINER_NAME=magento2.4.2
-GIT_REPO_BRANCH=magento/project-community-edition:2.4.2 # magento/project-community-edition:2.4.3 or magento/project-enterprise-edition:2.4.3
+CONTAINER_NAME=magento2.4.3
+GIT_REPO_BRANCH=magento/project-community-edition:2.4.3-p1 # magento/project-community-edition:2.4.3 or magento/project-enterprise-edition:2.4.3
 
 LOCAL=$(pwd)
 LOCAL=$LOCAL"/$(dirname "$0")"
@@ -40,11 +40,15 @@ init_project()
 
 init_project
 
+set -e
+
 podman build -t induxx/cloud:${CONTAINER_NAME} .
 
 IMAGEID=$(podman images | grep ${CONTAINER_NAME} | awk '{print $3}')
 
 podman push ${IMAGEID} registry.induxx.be:5000/induxx/cloud:${CONTAINER_NAME} --tls-verify=false
+
+set +e
 
 # cleanup
 podman rmi ${IMAGEID}
